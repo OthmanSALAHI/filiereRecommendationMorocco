@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <img src="{{ url_for('static', filename='images/e35316c2-b391-4bd4-ac99-06214bc0193b.jpg') }}">
+    <div>
+        <h1>AI Recommendations</h1>
+        <p>Personalized academic guidance powered by Artificial Intelligence.</p>
+
+        <!-- Loading bar -->
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        <p class="loading-text">Analyzing student profile...</p>
+    </div>
+</section>
+
+<section class="card student-data">
+    <h2>Student Information</h2>
+    <p><strong>Name:</strong> {{ student.name if student.name else session.get('username', 'N/A') }}</p>
+
+    <p><strong>Mean of BAC:</strong> {{ student.bac_mean }}</p>
+    <p><strong>Math Grade:</strong> {{ student.math_grade }}</p>
+    <p><strong>Physics/Chemistry Grade:</strong> {{ student.pc_grade }}</p>
+    <p><strong>French Grade:</strong> {{ student.fr_grade }}</p>
+    <p><strong>Field of BAC:</strong> {{ student.bac_field }}</p>
+
+    <form method="POST">
+        <button type="submit">Generate Recommendations</button>
+    </form>
+</section>
+
+
+{% endblock %}

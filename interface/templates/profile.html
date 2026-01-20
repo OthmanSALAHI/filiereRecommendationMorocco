@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero-form">
+    <!-- LEFT SIDE: PROFILE FORM -->
+    <div class="hero-left">
+        <h1>Student Profile</h1>
+        <p>Create your academic profile to receive AI-powered recommendations.</p>
+
+        <div class="card form-card">
+            <form method="POST">
+                <hr style="margin: 20px 0; border-color: rgba(255,215,0,0.5)">
+
+                <label>Mean of BAC</label>
+                <input type="number" step="0.1" name="bac_mean" min="0" max="20" required>
+
+                <label>Math Grade</label>
+                <input type="number" step="0.1" name="math_grade" min="0" max="20" required>
+
+                <label>Physics/Chemistry Grade</label>
+                <input type="number" step="0.1" name="pc_grade" min="0" max="20" required>
+
+                <label>French Grade</label>
+                <input type="number" step="0.1" name="fr_grade" min="0" max="20" required>
+
+                <label>Field of BAC</label>
+                <select name="bac_field" required>
+                    <option value="" disabled selected>Select your field</option>
+                    <option value="SM-A">SM-A (Sciences Math A)</option>
+                    <option value="SM-B">SM-B (Sciences Math B)</option>
+                    <option value="PC">PC (Physique Chimie)</option>
+                    <option value="SVT">SVT (Sciences de la Vie et de la Terre)</option>
+                    <option value="Eco-Gestion">Eco-Gestion</option>
+                </select>
+
+                <button type="submit">Save Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: ANIMATED CIRCULAR IMAGES -->
+    <div class="hero-right">
+        <div class="circle-container">
+            <img src="{{ url_for('static', filename='images/62b53f484454b93bf3b74399.jpg') }}" class="circle circle1">
+            <img src="{{ url_for('static', filename='images/DJV MAR 1031-02.jpg') }}" class="circle circle2">
+            <img src="{{ url_for('static', filename='images/DJV MAR 1031-03.jpg') }}" class="circle circle3">
+        </div>
+    </div>
+</section>
+
+{% endblock %}

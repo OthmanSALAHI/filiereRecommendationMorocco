@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="auth-section">
+    <div class="auth-card">
+        <h1>Create Account</h1>
+        <p>Sign up to access your academic profile and AI-powered recommendations</p>
+
+        <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Choose a username" required>
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Choose a password" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p class="signup-link">
+            Already have an account? <a href="{{ url_for('login') }}">Login</a>
+        </p>
+    </div>
+</section>
+
+{% endblock %}

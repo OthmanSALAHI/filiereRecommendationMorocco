@@ -1,0 +1,12 @@
+{
+    "root": {
+        "email": "oothmansalahi.24@gmail.com",
+        "password": "",
+        "avatar": "/static/images/avatars/root.png"
+    },
+    "othman": {
+        "email": "oothmansalahi.24@gmail.com",
+        "password": "0000",
+        "avatar": "/static/images/avatars/othman.png"
+    }
+}

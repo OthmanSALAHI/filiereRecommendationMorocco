@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Academic Recommendation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">🎓 AcademicReco</div>
+
+    <div class="header-right">
+        <nav>
+            {% if session.get('username') %}
+                <a href="{{ url_for('profile') }}">Profile</a>
+                <a href="{{ url_for('recommendations') }}">Recommendations</a>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+            {% endif %}
+        </nav>
+
+        {% if session.get('username') %}
+        <div class="user-info">
+            <img src="{{ session['avatar'] }}"
+                 alt="User Avatar"
+                 class="user-avatar">
+            <span class="username">{{ session['username'] }}</span>
+        </div>
+        {% endif %}
+    </div>
+</header>
+
+<!-- FLASH MESSAGES -->
+<div id="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-box {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <p>© 2026 Academic Recommendation System | AI & Luxury UI Project</p>
+</footer>
+
+<!-- =========================
+     PROFILE EDIT MODAL
+========================= -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Profile</h2>
+        <form method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+            <label>Change Avatar</label>
+            <input type="file" name="avatar" accept="image/*" id="avatarInput">
+
+            <label>Change Username</label>
+            <input type="text" name="username" value="{{ session['username'] }}" required>
+
+            <label>Change Email</label>
+            <input type="email" name="email" value="{{ session['email'] }}" required>
+
+            <label>Change Password</label>
+            <input type="password" name="password" placeholder="New Password">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // FLASH MESSAGES
+    const flashBoxes = document.querySelectorAll(".flash-box");
+    flashBoxes.forEach(box => {
+        box.addEventListener("click", () => box.remove());
+        setTimeout(() => {
+            box.classList.add("fade-out");
+            setTimeout(() => box.remove(), 500);
+        }, 4000);
+    });
+
+    // PROFILE MODAL
+    const modal = document.getElementById("profileModal");
+    const avatar = document.querySelector(".user-avatar");
+    const closeBtn = document.querySelector(".modal .close");
+    const avatarInput = document.getElementById("avatarInput");
+
+    if(avatar){
+        avatar.addEventListener("click", () => {
+            modal.style.display = "flex";
+        });
+    }
+
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
+    // Live preview avatar before saving
+    avatarInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if(file && avatar){
+            avatar.src = URL.createObjectURL(file);
+        }
+    });
+});
+</script>
+</body>
+</html>
