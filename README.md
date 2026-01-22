@@ -8,7 +8,7 @@ The system uses a supervised learning approach to predict the most suitable high
 1.  Generating a synthetic dataset representing student profiles (grades and baccalaureate branch).
 2.  Applying specific business logic (Moroccan orientation rules) to label the data.
 3.  Training multiple Machine Learning models to learn these patterns.
-4.  Selecting and saving the best performing model for future predictions.
+4.  Providing a web interface for students to get real-time recommendations and for admins to monitor model performance.
 
 ## 📂 Project Structure
 
@@ -16,13 +16,13 @@ The system uses a supervised learning approach to predict the most suitable high
 ├── README.md               # Project documentation
 ├── data_training/          # Scripts for data generation and model training
 │   ├── generate_data.py    # Script to generate synthetic dataset
-│   ├── creating_modele.ipynb # Jupyter notebook for training and evaluating models
+│   ├── creating_modele.ipynb # Jupyter notebook for offline training
 │   └── dataset_orientation_maroc_6000.csv # Generated dataset
 ├── interface/              # Web application
 │   ├── app.py              # Main Flask application
-│   ├── templates/          # HTML templates
-│   ├── static/             # CSS and images
-│   ├── users.json          # User data storage
+│   ├── users.json          # User data storage (JSON based)
+│   ├── templates/          # HTML templates (includes admin.html)
+│   ├── static/             # CSS, images, and user avatars
 │   └── requirements.txt    # Web app dependencies
 └── model/                  # Saved artifacts
     ├── best_model_Decision_Tree.pkl # Best trained model
@@ -32,7 +32,7 @@ The system uses a supervised learning approach to predict the most suitable high
 
 ## 🛠 Prerequisites
 
-You need Python installed along with the following libraries (see `interface/requirements.txt`):
+You need Python installed along with the following libraries:
 
 ```bash
 pip install pandas numpy scikit-learn matplotlib joblib flask
@@ -46,35 +46,20 @@ To create the synthetic dataset used for training, run the generation script:
 ```bash
 python data_training/generate_data.py
 ```
-This will create `dataset_orientation_maroc_6000.csv` containing 6000 student profiles with features like:
-- `Moyenne_Generale` (General Average)
-- `Note_Maths`, `Note_Physique`, `Note_Francais`
-- `Filiere_Bac` (High School Branch: SM-A, SM-B, PC, SVT, Eco-Gestion)
-- `Recommendation` (Target Label: Medecine, CPGE, ENSA, ENCG, etc.)
+This will create `dataset_orientation_maroc_6000.csv` containing 6000 student profiles.
 
-### 2. Model Training & Evaluation
-Open the notebook `data_training/creating_modele.ipynb`. This notebook performs the following:
-- Loads the dataset.
-- Visualizes data distributions.
-- Preprocesses data (Label Encoding).
-- Trains 6 different algorithms:
-    - Random Forest
-    - Decision Tree
-    - K-Nearest Neighbors (KNN)
-    - Logistic Regression
-    - Gradient Boosting
-    - SVM
-- Compares accuracy and saves the best model (e.g., Decision Tree) to the `model/` folder.
+### 2. Model Training (Offline)
+Open `data_training/creating_modele.ipynb` to train models, visualize data distributions, and save the best performing model to the `model/` folder.
 
-### 3. Web Interface
-To run the web application for student orientation:
+### 3. Web Application
+To run the full student orientation platform:
 
 1. Navigate to the `interface` directory:
    ```bash
    cd interface
    ```
 
-2. Install the required dependencies:
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
@@ -84,23 +69,39 @@ To run the web application for student orientation:
    python app.py
    ```
 
-4. Open your browser and go to `http://127.0.0.1:5000` to access the application.
-   - **Login/Signup**: Create an account or log in.
-   - **Profile**: Enter your Baccalaureate grades and stream.
-   - **Recommendation**: View the AI-predicted educational path.
+4. Open your browser at `http://127.0.0.1:5000`.
+
+## ✨ New Features
+
+### 🎓 Student Portal
+- **Smart Prediction**: Enter Baccalaureate grades (Math, Physics, French) and stream to get an instant recommendation.
+- **User Accounts**: Secure Login and Signup system.
+- **Profile Customization**: Users can update their profile and upload **custom avatars**.
+
+### 🛡️ Admin Dashboard
+The application now includes a powerful **Admin Dashboard** for monitoring AI performance.
+
+- **Access**: Sign up or log in with the username **`root`**.
+- **Real-time Evaluation**: The dashboard loads the training dataset and trains 6 different models on the fly (Decision Tree, Random Forest, KNN, SVM, etc.).
+- **Visual Analytics**: Displays a comparative bar chart and detailed accuracy tables to check which model performs best on the current data.
 
 ## 📊 Methodology
 
-### Business Logic (Data Labeling)
-The synthetic data is labeled based on realistic orientation rules in Morocco:
-- **Medecine / Pharmacie**: High general average (>16) and strong science scores.
-- **CPGE (Prep School)**: Strong Maths (>15) and good general average.
-- **ENSA / ENSAM**: Good Maths and Physics (>13).
-- **ENCG**: Eco-Gestion students with good grades.
-- **FST / Fac**: Other profiles based on varying thresholds.
+### Business Logic
+The dataset is labeled based on Moroccan orientation rules:
+- **Medecine**: High average (>16) + strong science scores.
+- **CPGE**: Strong Math (>15).
+- **ENSA/ENSAM**: Good Math & Physics.
+- **ENCG**: Focus on Eco-Gestion backgrounds.
 
-### Model Performance
-The models are evaluated using Accuracy metrics and Classification Reports. The system automatically selects the model with the highest accuracy on the test set.
+### Model Comparison
+The admin page compares the following algorithms:
+- Decision Tree
+- Random Forest
+- K-Nearest Neighbors (KNN)
+- Logistic Regression
+- Support Vector Machine (SVM)
+- Gradient Boosting
 
 ## 👥 Authors
 
