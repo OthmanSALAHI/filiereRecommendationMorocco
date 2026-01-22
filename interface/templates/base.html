@@ -14,6 +14,9 @@
     <div class="header-right">
         <nav>
             {% if session.get('username') %}
+                {% if session.get('username') == 'root' %}
+                    <a href="{{ url_for('admin') }}">Admin</a>
+                {% endif %}
                 <a href="{{ url_for('profile') }}">Profile</a>
                 <a href="{{ url_for('recommendations') }}">Recommendations</a>
                 <a href="{{ url_for('dashboard') }}">Dashboard</a>

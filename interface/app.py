@@ -4,6 +4,19 @@ import joblib
 import pandas as pd
 import numpy as np
 import json
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
@@ -15,6 +28,9 @@ os.makedirs(AVATAR_DIR, exist_ok=True)
 
 # File for local persistence
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
+
+# DATASET PATH
+DATASET_PATH = os.path.join(os.path.dirname(BASE_DIR), 'data_training', 'dataset_orientation_maroc_6000.csv')
 
 # ---------------- LOAD MODEL ----------------
 # Adjust path to find the 'model' folder (sibling to 'interface')
@@ -84,6 +100,89 @@ def save_users(data):
         print(f"Error saving users: {e}")
 
 users = load_users()
+
+# ---------------- ADMIN ----------------
+@app.route("/admin")
+def admin():
+    if "username" not in session:
+        return redirect(url_for("login"))
+    
+    # Simple authorization check
+    if session["username"] != "root":
+        flash("Access denied. Admin rights required.", "error")
+        return redirect(url_for("dashboard"))
+
+    results = {}
+    plot_url = None
+
+    if os.path.exists(DATASET_PATH):
+        try:
+            # Load Data
+            df = pd.read_csv(DATASET_PATH)
+            
+            # Preprocessing
+            le_filiere_local = LabelEncoder()
+            df['Filiere_Bac_Encoded'] = le_filiere_local.fit_transform(df['Filiere_Bac'])
+            
+            le_target_local = LabelEncoder()
+            df['Recommendation_Encoded'] = le_target_local.fit_transform(df['Recommendation'])
+            
+            X = df[['Moyenne_Generale', 'Note_Maths', 'Note_Physique', 'Note_Francais', 'Filiere_Bac_Encoded']]
+            y = df['Recommendation_Encoded']
+            
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            
+            # Models to compare
+            models = {
+                'Decision Tree': DecisionTreeClassifier(random_state=42),
+                'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
+                'KNN': KNeighborsClassifier(n_neighbors=5),
+                'Logistic Reg': LogisticRegression(max_iter=1000, random_state=42),
+                'SVM': SVC(kernel='rbf', random_state=42),
+                'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
+            }
+            
+            # Train and Evaluate
+            for name, model_inst in models.items():
+                model_inst.fit(X_train, y_train)
+                y_pred = model_inst.predict(X_test)
+                results[name] = accuracy_score(y_test, y_pred)
+            
+            # Generate Plot
+            fig, ax = plt.subplots(figsize=(10, 6))
+            names = list(results.keys())
+            values = list(results.values())
+            
+            # Find max for highlighting
+            max_val = max(values)
+            colors = ['#4CAF50' if v == max_val else '#2196F3' for v in values]
+            
+            bars = ax.bar(names, values, color=colors)
+            ax.set_ylim(0, 1.1)
+            ax.set_ylabel('Accuracy')
+            ax.set_title('Model Performance Comparison')
+            
+            # Add labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                        f'{height:.4f}',
+                        ha='center', va='bottom')
+            
+            # Save to string buffer
+            img = io.BytesIO()
+            plt.tight_layout()
+            plt.savefig(img, format='png')
+            img.seek(0)
+            plot_url = base64.b64encode(img.getvalue()).decode()
+            plt.close(fig)
+            
+        except Exception as e:
+            flash(f"Error processing data for admin view: {e}", "error")
+    else:
+        flash("Dataset not found!", "error")
+
+    return render_template("admin.html", results=results, plot_url=plot_url)
 
 # ---------------- LOGIN ----------------
 @app.route("/login", methods=["GET", "POST"])

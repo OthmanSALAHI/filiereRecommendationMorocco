@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-admin">
+    <h2>Admin Dashboard: Model Performance</h2>
+
+    <div class="admin-content">
+        {% if plot_url %}
+        <div class="chart-container">
+            <h3>Performance Visualization</h3>
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Model Comparison Chart" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px;">
+        </div>
+        {% endif %}
+
+        <div class="results-table">
+            <h3>Detailed Accuracy Scores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model Name</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, accuracy in results.items() %}
+                    <tr>
+                        <td>{{ name }}</td>
+                        <td>{{ "%.4f"|format(accuracy) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container-admin {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .admin-content {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        align-items: center;
+    }
+    .results-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        min-width: 400px;
+    }
+    .results-table th, .results-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    .results-table th {
+        background-color: #f4f4f4;
+        font-weight: 600;
+    }
+    .results-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    h2, h3 {
+        color: #333;
+        text-align: center;
+    }
+</style>
+{% endblock %}

@@ -845,3 +845,7 @@ footer {
     cursor: pointer;
     color: #ffd700;
 }
+
+th, td {
+    color: black;
+}

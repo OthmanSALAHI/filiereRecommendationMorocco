@@ -1,12 +1,22 @@
 {
     "root": {
-        "email": "oothmansalahi.24@gmail.com",
-        "password": "",
+        "email": "ootmansalhi.24@gmail.com",
+        "password": "s",
         "avatar": "/static/images/avatars/root.png"
     },
     "othman": {
-        "email": "oothmansalahi.24@gmail.com",
+        "email": "ootmansalhi.24@gmail.com",
         "password": "0000",
-        "avatar": "/static/images/avatars/othman.png"
+        "avatar": "/static/images/avatars/othman-salahi.png"
+    },
+    "oppp": {
+        "email": "ootmanlsalhi.24@gmail.com",
+        "password": "&\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9",
+        "avatar": "/static/images/avatars/oppp.png"
+    },
+    "Sadmad": {
+        "email": "sadmad@gmail.fr",
+        "password": "a",
+        "avatar": "/static/images/avatars/Sadmad.png"
     }
 }
